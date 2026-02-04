@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الحسابات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: flex;
+            min-height: 500px;
+        }
+        
+        .auth-section {
+            flex: 1;
+            padding: 30px;
+            border-right: 1px solid #eee;
+        }
+        
+        .data-section {
+            flex: 1.5;
+            padding: 30px;
+            display: none;
+        }
+        
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .form-box {
+            display: none;
+        }
+        
+        .form-box.active {
+            display: block;
+        }
+        
+        .form-box h2 {
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 24px;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px 45px 15px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+        
+        .btn-google {
+            background: #fff;
+            color: #333;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-google:hover {
+            background: #f8f9fa;
+        }
+        
+        .form-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .form-links a {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .form-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .user-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            width: auto;
+            padding: 10px 20px;
+            margin-top: 20px;
+        }
+        
+        .logout-btn:hover {
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .auth-section, .data-section {
+                border: none;
+                border-bottom: 1px solid #eee;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>نظام إدارة الحسابات</h1>
+            <p>سجل الدخول أو أنشئ حساب جديد لإدارة بياناتك</p>
+        </div>
+        
+        <div class="content">
+            <!-- قسم المصادقة -->
+            <div class="auth-section" id="authSection">
+                <div class="form-container">
+                    <!-- تسجيل الدخول -->
+                    <div class="form-box active" id="login-form">
+                        <h2>تسجيل الدخول</h2>
+                        <div id="loginMessage" class="message"></div>
+                        <form id="loginForm">
+                            <div class="input-group">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+                            </div>
+                            <button type="submit" class="btn" id="loginBtn">تسجيل الدخول</button>
+                            <button type="button" class="btn btn-google" id="googleLoginBtn">
+                                <i class="fab fa-google"></i> تسجيل الدخول بحساب جوجل
+                            </button>
+                            <div class="form-links">
+                                <a id="showRegister">لا تملك حساب؟ سجل الآن</a>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- تسجيل حساب جديد -->
+                    <div class="form-box" id="register-form">
+                        <h2>تسجيل حساب جديد</h2>
+                        <div id="registerMessage" class="message"></div>
+                        <form id="registerForm">
+                            <div class="input-group">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="registerName" placeholder="الاسم الكامل" required>
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="registerEmail" placeholder="البريد الإلكتروني" required>
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="registerPassword" placeholder="كلمة المرور (6 أحرف على الأقل)" required minlength="6">
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="registerConfirmPassword" placeholder="تأكيد كلمة المرور" required>
+                            </div>
+                            <button type="submit" class="btn" id="registerBtn">تسجيل حساب جديد</button>
+                            <div class="form-links">
+                                <a id="showLogin">لديك حساب بالفعل؟ سجل الدخول</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- قسم عرض البيانات -->
+            <div class="data-section" id="dataSection">
+                <div class="user-info">
+                    <h3 id="userName">مرحباً!</h3>
+                    <p id="userEmail"></p>
+                    <button class="btn logout-btn" id="logoutBtn">تسجيل الخروج</button>
+                </div>
+                
+                <h2>الحسابات المسجلة</h2>
+                <div id="usersTable">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>طريقة التسجيل</th>
+                                <th>تاريخ التسجيل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersList">
+                            <!-- سيتم ملء البيانات هنا -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            query, 
+            orderBy,
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCE0ziqBvxyttoaYxEfyX8GRsVR1KgoArc",
+            authDomain: "project-1-fffb5.firebaseapp.com",
+            projectId: "project-1-fffb5",
+            storageBucket: "project-1-fffb5.firebasestorage.app",
+            messagingSenderId: "724109412765",
+            appId: "1:724109412765:web:baa5fbe403b317c6420774",
+            measurementId: "G-7Y2CM7BDJQ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        // DOM Elements
+        const authSection = document.getElementById('authSection');
+        const dataSection = document.getElementById('dataSection');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const showRegister = document.getElementById('showRegister');
+        const showLogin = document.getElementById('showLogin');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginMessage = document.getElementById('loginMessage');
+        const registerMessage = document.getElementById('registerMessage');
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const usersList = document.getElementById('usersList');
+
+        // Switch between login and register forms
+        showRegister.addEventListener('click', () => {
+            loginForm.classList.remove('active');
+            registerForm.classList.add('active');
+            clearMessages();
+        });
+
+        showLogin.addEventListener('click', () => {
+            registerForm.classList.remove('active');
+            loginForm.classList.add('active');
+            clearMessages();
+        });
+
+        // Clear messages
+        function clearMessages() {
+            loginMessage.style.display = 'none';
+            registerMessage.style.display = 'none';
+        }
+
+        // Show message function
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = `message ${type}`;
+            element.style.display = 'block';
+        }
+
+        // Login with email and password
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                loginBtn.textContent = 'جاري تسجيل الدخول...';
+                loginBtn.disabled = true;
+                
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                await saveUserToDatabase(userCredential.user, 'email');
+                showMessage(loginMessage, 'تم تسجيل الدخول بنجاح!', 'success');
+            } catch (error) {
+                let errorMessage = 'حدث خطأ أثناء تسجيل الدخول';
+                switch(error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'الحساب غير موجود';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'كلمة المرور غير صحيحة';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'البريد الإلكتروني غير صالح';
+                        break;
+                }
+                showMessage(loginMessage, errorMessage, 'error');
+            } finally {
+                loginBtn.textContent = 'تسجيل الدخول';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Register with email and password
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showMessage(registerMessage, 'كلمات المرور غير متطابقة', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage(registerMessage, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+                return;
+            }
+
+            try {
+                registerBtn.textContent = 'جاري إنشاء الحساب...';
+                registerBtn.disabled = true;
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await saveUserToDatabase(userCredential.user, 'email', name);
+                showMessage(registerMessage, 'تم إنشاء الحساب بنجاح!', 'success');
+                
+                // Clear form
+                document.getElementById('registerForm').reset();
+                
+                // Switch to login form after 2 seconds
+                setTimeout(() => {
+                    registerForm.classList.remove('active');
+                    loginForm.classList.add('active');
+                    clearMessages();
+                }, 2000);
+            } catch (error) {
+                let errorMessage = 'حدث خطأ أثناء إنشاء الحساب';
+                switch(error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'البريد الإلكتروني مستخدم بالفعل';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'البريد الإلكتروني غير صالح';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'كلمة المرور ضعيفة';
+                        break;
+                }
+                showMessage(registerMessage, errorMessage, 'error');
+            } finally {
+                registerBtn.textContent = 'تسجيل حساب جديد';
+                registerBtn.disabled = false;
+            }
+        });
+
+        // Login with Google
+        googleLoginBtn.addEventListener('click', async () => {
+            try {
+                googleLoginBtn.textContent = 'جاري التسجيل...';
+                googleLoginBtn.disabled = true;
+                
+                const result = await signInWithPopup(auth, googleProvider);
+                await saveUserToDatabase(result.user, 'google');
+                showMessage(loginMessage, 'تم تسجيل الدخول بحساب جوجل بنجاح!', 'success');
+            } catch (error) {
+                showMessage(loginMessage, 'حدث خطأ أثناء تسجيل الدخول بحساب جوجل', 'error');
+            } finally {
+                googleLoginBtn.textContent = 'تسجيل الدخول بحساب جوجل';
+                googleLoginBtn.disabled = false;
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                showDashboard(false);
+            } catch (error) {
+                console.error('خطأ في تسجيل الخروج:', error);
+            }
+        });
+
+        // Save user to Firestore
+        async function saveUserToDatabase(user, provider, name = null) {
+            try {
+                const userData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: name || user.displayName || user.email.split('@')[0],
+                    provider: provider,
+                    createdAt: serverTimestamp(),
+                    lastLogin: serverTimestamp()
+                };
+
+                await addDoc(collection(db, 'users'), userData);
+                loadUsers();
+            } catch (error) {
+                console.error('خطأ في حفظ بيانات المستخدم:', error);
+            }
+        }
+
+        // Load users from Firestore
+        async function loadUsers() {
+            try {
+                const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                usersList.innerHTML = '';
+                
+                querySnapshot.forEach((doc) => {
+                    const user = doc.data();
+                    const row = document.createElement('tr');
+                    
+                    const date = user.createdAt ? 
+                        new Date(user.createdAt.seconds * 1000).toLocaleDateString('ar-SA') : 
+                        'غير معروف';
+                    
+                    row.innerHTML = `
+                        <td>${user.displayName || 'بدون اسم'}</td>
+                        <td>${user.email}</td>
+                        <td>${user.provider === 'google' ? 'جوجل' : 'بريد إلكتروني'}</td>
+                        <td>${date}</td>
+                    `;
+                    
+                    usersList.appendChild(row);
+                });
+            } catch (error) {
+                console.error('خطأ في تحميل المستخدمين:', error);
+            }
+        }
+
+        // Show/hide dashboard
+        function showDashboard(isLoggedIn, user = null) {
+            if (isLoggedIn && user) {
+                authSection.style.display = 'none';
+                dataSection.style.display = 'block';
+                userName.textContent = `مرحباً ${user.displayName || user.email}`;
+                userEmail.textContent = user.email;
+                loadUsers();
+            } else {
+                authSection.style.display = 'block';
+                dataSection.style.display = 'none';
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+                clearMessages();
+            }
+        }
+
+        // Auth state observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                showDashboard(true, user);
+            } else {
+                showDashboard(false);
+            }
+        });
+
+        // Clear forms on page load
+        window.addEventListener('load', () => {
+            document.getElementById('loginForm').reset();
+            document.getElementById('registerForm').reset();
+        });
+    </script>
+</body>
+</html>
