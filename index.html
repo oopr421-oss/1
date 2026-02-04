@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أسعار العملات والذهب في ليبيا</title>
+    <style>
+        /* CSS Reset وتصميم أساسي */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        :root {
+            --primary-color: #2e7d32;
+            --secondary-color: #c8a415;
+            --accent-color: #1565c0;
+            --light-color: #ffffff;
+            --dark-color: #1a1a1a;
+            --gray-color: #f5f5f5;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        /* تصميم شريط التنقل */
+        .navbar {
+            background-color: var(--light-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .logo i {
+            color: var(--secondary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .btn-login, .btn-logout {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-login:hover, .btn-logout:hover {
+            background-color: #1b5e20;
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+        
+        /* تصميم التنبيهات */
+        .alerts-section {
+            background-color: #fff8e1;
+            padding: 1.5rem 0;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: #5d4037;
+        }
+        
+        .alerts-container {
+            background-color: white;
+            padding: 1.25rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        .alert-placeholder {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #666;
+        }
+        
+        /* تصميم بطاقات العملات */
+        .currency-section, .gold-section {
+            padding: 3rem 0;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .section-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--primary-color);
+        }
+        
+        .last-update {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .currency-grid, .gold-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .currency-card, .gold-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .currency-card:hover, .gold-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .main-currency {
+            border-top: 4px solid var(--primary-color);
+        }
+        
+        .currency-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .currency-flag {
+            width: 50px;
+            height: 50px;
+            background-color: var(--gray-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .currency-header h3 {
+            flex: 1;
+            color: var(--dark-color);
+        }
+        
+        .currency-code {
+            background-color: var(--gray-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .currency-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .currency-change {
+            font-size: 0.9rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .positive {
+            color: #2e7d32;
+        }
+        
+        .negative {
+            color: #c62828;
+        }
+        
+        /* تصميم الذهب */
+        .gold-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .gold-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #fff8e1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+        
+        .gold-price {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .gold-karat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* تصميم تذييل الصفحة */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2.5rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        
+        .refresh-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #ccc;
+        }
+        
+        /* تصميم صفحة تسجيل الدخول */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 2rem;
+        }
+        
+        .login-box {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.85rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-submit:hover {
+            background-color: #1b5e20;
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+        }
+        
+        /* تصميم لوحة التحكم */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 250px;
+            background-color: var(--dark-color);
+            color: white;
+            padding: 1.5rem 0;
+        }
+        
+        .admin-logo {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid #444;
+            margin-bottom: 1.5rem;
+        }
+        
+        .admin-nav {
+            padding: 0 1rem;
+        }
+        
+        .admin-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            color: #ddd;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            transition: background-color 0.3s;
+        }
+        
+        .admin-nav a:hover, .admin-nav a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .admin-main {
+            flex: 1;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .price-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .price-input {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .price-input label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .btn-save {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+        
+        .btn-save:hover {
+            background-color: #1b5e20;
+        }
+        
+        /* تصميم متجاوب */
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-links.mobile-active {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                left: 0;
+                background-color: white;
+                padding: 1.5rem;
+                box-shadow: var(--shadow);
+            }
+            
+            .admin-container {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+            }
+            
+            .admin-nav {
+                display: flex;
+                overflow-x: auto;
+                gap: 0.5rem;
+            }
+            
+            .admin-nav a {
+                white-space: nowrap;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .currency-grid, .gold-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <span>أسعار ليبيا</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="#currency" class="nav-link">العملات</a>
+                <a href="#gold" class="nav-link">الذهب</a>
+                <button id="loginBtn" class="btn-login">
+                    <i class="fas fa-user"></i> تسجيل الدخول
+                </button>
+                <button id="logoutBtn" class="btn-logout" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </button>
+            </div>
+            
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- التنبيهات العاجلة -->
+    <section class="alerts-section">
+        <div class="container">
+            <div class="alert-header">
+                <i class="fas fa-bell"></i>
+                <h3>تنبيهات هامة</h3>
+            </div>
+            <div id="alertsContainer" class="alerts-container">
+                <div class="alert-placeholder">
+                    <i class="fas fa-info-circle"></i>
+                    <p>جارٍ تحميل التنبيهات...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم العملات -->
+    <section id="currency" class="currency-section">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-money-bill-wave"></i> أسعار العملات</h2>
+                <p class="last-update">آخر تحديث: <span id="lastUpdate">--:--</span></p>
+            </div>
+            
+            <div class="currency-grid">
+                <!-- الدولار الأمريكي -->
+                <div class="currency-card main-currency">
+                    <div class="currency-header">
+                        <div class="currency-flag">
+                            <i class="fas fa-flag-usa"></i>
+                        </div>
+                        <h3>الدولار الأمريكي</h3>
+                        <span class="currency-code">USD</span>
+                    </div>
+                    <div class="currency-price">
+                        <span id="usdPrice">6.15</span> د.ل
+                    </div>
+                    <div class="currency-change">
+                        <span class="positive"><i class="fas fa-arrow-up"></i> 0.02</span>
+                        <span>(+0.33%)</span>
+                    </div>
+                </div>
+                
+                <!-- اليورو -->
+                <div class="currency-card">
+                    <div class="currency-header">
+                        <div class="currency-flag">
+                            <i class="fas fa-flag-eu"></i>
+                        </div>
+                        <h3>اليورو الأوروبي</h3>
+                        <span class="currency-code">EUR</span>
+                    </div>
+                    <div class="currency-price">
+                        <span id="eurPrice">6.70</span> د.ل
+                    </div>
+                    <div class="currency-change">
+                        <span class="negative"><i class="fas fa-arrow-down"></i> 0.05</span>
+                        <span>(-0.74%)</span>
+                    </div>
+                </div>
+                
+                <!-- الجنيه الإسترليني -->
+                <div class="currency-card">
+                    <div class="currency-header">
+                        <div class="currency-flag">
+                            <i class="fas fa-flag-uk"></i>
+                        </div>
+                        <h3>الجنيه الإسترليني</h3>
+                        <span class="currency-code">GBP</span>
+                    </div>
+                    <div class="currency-price">
+                        <span id="gbpPrice">7.85</span> د.ل
+                    </div>
+                    <div class="currency-change">
+                        <span class="positive"><i class="fas fa-arrow-up"></i> 0.12</span>
+                        <span>(+1.55%)</span>
+                    </div>
+                </div>
+                
+                <!-- الفرنك السويسري -->
+                <div class="currency-card">
+                    <div class="currency-header">
+                        <div class="currency-flag">
+                            <i class="fas fa-flag-ch"></i>
+                        </div>
+                        <h3>الفرنك السويسري</h3>
+                        <span class="currency-code">CHF</span>
+                    </div>
+                    <div class="currency-price">
+                        <span id="chfPrice">6.80</span> د.ل
+                    </div>
+                    <div class="currency-change">
+                        <span class="positive"><i class="fas fa-arrow-up"></i> 0.08</span>
+                        <span>(+1.19%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الذهب -->
+    <section id="gold" class="gold-section">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-gem"></i> أسعار الذهب</h2>
+                <p class="last-update">آخر تحديث: <span id="goldLastUpdate">--:--</span></p>
+            </div>
+            
+            <div class="gold-grid">
+                <!-- عيار 24 -->
+                <div class="gold-card">
+                    <div class="gold-header">
+                        <div class="gold-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3>ذهب عيار 24</h3>
+                    </div>
+                    <div class="gold-price">
+                        <span id="gold24Price">123.50</span> د.ل
+                    </div>
+                    <div class="gold-karat">
+                        <span>سعر الجرام:</span>
+                        <span id="gold24PerGram">123.50 د.ل</span>
+                    </div>
+                    <div class="currency-change">
+                        <span class="positive"><i class="fas fa-arrow-up"></i> 1.25</span>
+                        <span>(+1.02%)</span>
+                    </div>
+                </div>
+                
+                <!-- عيار 21 -->
+                <div class="gold-card">
+                    <div class="gold-header">
+                        <div class="gold-icon">
+                            <i class="fas fa-ring"></i>
+                        </div>
+                        <h3>ذهب عيار 21</h3>
+                    </div>
+                    <div class="gold-price">
+                        <span id="gold21Price">108.06</span> د.ل
+                    </div>
+                    <div class="gold-karat">
+                        <span>سعر الجرام:</span>
+                        <span id="gold21PerGram">108.06 د.ل</span>
+                    </div>
+                    <div class="currency-change">
+                        <span class="positive"><i class="fas fa-arrow-up"></i> 1.09</span>
+                        <span>(+1.02%)</span>
+                    </div>
+                </div>
+                
+                <!-- عيار 18 -->
+                <div class="gold-card">
+                    <div class="gold-header">
+                        <div class="gold-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3>ذهب عيار 18</h3>
+                    </div>
+                    <div class="gold-price">
+                        <span id="gold18Price">92.63</span> د.ل
+                    </div>
+                    <div class="gold-karat">
+                        <span>سعر الجرام:</span>
+                        <span id="gold18PerGram">92.63 د.ل</span>
+                    </div>
+                    <div class="currency-change">
+                        <span class="positive"><i class="fas fa-arrow-up"></i> 0.94</span>
+                        <span>(+1.02%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- تذييل الصفحة -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    <span>أسعار ليبيا</span>
+                </div>
+                <div class="refresh-info">
+                    <i class="fas fa-sync-alt"></i>
+                    <p>يتم تحديث الأسعار تلقائياً كل 5 دقائق</p>
+                </div>
+                <div>
+                    <p>جميع الأسعار بالدينار الليبي (د.ل)</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- نافذة تسجيل الدخول -->
+    <div id="loginModal" class="login-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); z-index: 2000;">
+        <div class="login-box">
+            <div class="login-header">
+                <h2>تسجيل الدخول</h2>
+                <p>الدخول إلى لوحة التحكم الإدارية</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني:</label>
+                    <input type="email" id="email" required placeholder="example@domain.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">كلمة المرور:</label>
+                    <input type="password" id="password" required placeholder="********">
+                </div>
+                <button type="submit" class="btn-submit">تسجيل الدخول</button>
+            </form>
+            <div class="login-footer">
+                <p id="loginMessage">استخدم بيانات حساب المدير للدخول</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم -->
+    <div id="adminPanel" class="admin-container" style="display: none;">
+        <div class="admin-sidebar">
+            <div class="admin-logo">
+                <h2><i class="fas fa-user-shield"></i> لوحة التحكم</h2>
+            </div>
+            <div class="admin-nav">
+                <a href="#adminCurrency" class="active">
+                    <i class="fas fa-coins"></i> أسعار العملات
+                </a>
+                <a href="#adminGold">
+                    <i class="fas fa-gem"></i> أسعار الذهب
+                </a>
+                <a href="#adminAlerts">
+                    <i class="fas fa-bell"></i> التنبيهات
+                </a>
+                <a href="#" id="adminLogout">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </a>
+            </div>
+        </div>
+        <div class="admin-main">
+            <div class="admin-header">
+                <h2>لوحة التحكم الإدارية</h2>
+                <div class="refresh-info">
+                    <i class="fas fa-sync-alt"></i>
+                    <p>آخر تحديث للبيانات: <span id="adminLastUpdate">--:--</span></p>
+                </div>
+            </div>
+            
+            <!-- قسم العملات -->
+            <div id="adminCurrency" class="admin-section">
+                <h3><i class="fas fa-coins"></i> تعديل أسعار العملات</h3>
+                <div class="price-inputs">
+                    <div class="price-input">
+                        <label for="adminUsd">الدولار الأمريكي (USD)</label>
+                        <input type="number" id="adminUsd" step="0.01" min="0" placeholder="السعر بالدينار">
+                    </div>
+                    <div class="price-input">
+                        <label for="adminEur">اليورو الأوروبي (EUR)</label>
+                        <input type="number" id="adminEur" step="0.01" min="0" placeholder="السعر بالدينار">
+                    </div>
+                    <div class="price-input">
+                        <label for="adminGbp">الجنيه الإسترليني (GBP)</label>
+                        <input type="number" id="adminGbp" step="0.01" min="0" placeholder="السعر بالدينار">
+                    </div>
+                    <div class="price-input">
+                        <label for="adminChf">الفرنك السويسري (CHF)</label>
+                        <input type="number" id="adminChf" step="0.01" min="0" placeholder="السعر بالدينار">
+                    </div>
+                </div>
+                <button class="btn-save" id="saveCurrency">حفظ التغييرات</button>
+            </div>
+            
+            <!-- قسم الذهب -->
+            <div id="adminGold" class="admin-section">
+                <h3><i class="fas fa-gem"></i> تعديل أسعار الذهب</h3>
+                <div class="price-inputs">
+                    <div class="price-input">
+                        <label for="adminGold24">ذهب عيار 24</label>
+                        <input type="number" id="adminGold24" step="0.01" min="0" placeholder="السعر بالدينار">
+                    </div>
+                    <div class="price-input">
+                        <label for="adminGold21">ذهب عيار 21</label>
+                        <input type="number" id="adminGold21" step="0.01" min="0" placeholder="السعر بالدينار">
+                    </div>
+                    <div class="price-input">
+                        <label for="adminGold18">ذهب عيار 18</label>
+                        <input type="number" id="adminGold18" step="0.01" min="0" placeholder="السعر بالدينار">
+                    </div>
+                </div>
+                <button class="btn-save" id="saveGold">حفظ التغييرات</button>
+            </div>
+            
+            <!-- قسم التنبيهات -->
+            <div id="adminAlerts" class="admin-section">
+                <h3><i class="fas fa-bell"></i> إدارة التنبيهات</h3>
+                <div class="form-group">
+                    <label for="adminAlertTitle">عنوان التنبيه:</label>
+                    <input type="text" id="adminAlertTitle" placeholder="أدخل عنوان التنبيه">
+                </div>
+                <div class="form-group">
+                    <label for="adminAlertMessage">نص التنبيه:</label>
+                    <textarea id="adminAlertMessage" rows="4" placeholder="أدخل نص التنبيه"></textarea>
+                </div>
+                <button class="btn-save" id="saveAlert">إضافة تنبيه</button>
+                <div id="alertsList" style="margin-top: 1.5rem;">
+                    <h4>التنبيهات الحالية:</h4>
+                    <div id="currentAlerts">
+                        <p>لا توجد تنبيهات حالية.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // استيراد وظائف Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            signOut,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            getDocs,
+            updateDoc,
+            Timestamp,
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // إعدادات Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCE0ziqBvxyttoaYxEfyX8GRsVR1KgoArc",
+            authDomain: "project-1-fffb5.firebaseapp.com",
+            projectId: "project-1-fffb5",
+            storageBucket: "project-1-fffb5.firebasestorage.app",
+            messagingSenderId: "724109412765",
+            appId: "1:724109412765:web:baa5fbe403b317c6420774",
+            measurementId: "G-7Y2CM7BDJQ"
+        };
+
+        // تهيئة Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // بيانات افتراضية
+        const defaultPrices = {
+            currency: {
+                usd: 6.15,
+                eur: 6.70,
+                gbp: 7.85,
+                chf: 6.80
+            },
+            gold: {
+                gold24: 123.50,
+                gold21: 108.06,
+                gold18: 92.63
+            },
+            alerts: [
+                { title: "مرحبا بكم", message: "مرحباً بكم في موقع أسعار العملات والذهب في ليبيا" }
+            ]
+        };
+
+        // تهيئة البيانات في Firebase إذا لم تكن موجودة
+        async function initializeData() {
+            try {
+                const pricesRef = doc(db, "prices", "current");
+                const pricesDoc = await getDoc(pricesRef);
+                
+                if (!pricesDoc.exists()) {
+                    await setDoc(pricesRef, {
+                        ...defaultPrices,
+                        lastUpdated: Timestamp.now()
+                    });
+                    console.log("تم إنشاء البيانات الافتراضية");
+                }
+            } catch (error) {
+                console.error("خطأ في تهيئة البيانات:", error);
+            }
+        }
+
+        // تحميل الأسعار من Firebase
+        async function loadPrices() {
+            try {
+                const pricesRef = doc(db, "prices", "current");
+                const pricesDoc = await getDoc(pricesRef);
+                
+                if (pricesDoc.exists()) {
+                    const data = pricesDoc.data();
+                    
+                    // تحديث أسعار العملات
+                    document.getElementById("usdPrice").textContent = data.currency.usd.toFixed(2);
+                    document.getElementById("eurPrice").textContent = data.currency.eur.toFixed(2);
+                    document.getElementById("gbpPrice").textContent = data.currency.gbp.toFixed(2);
+                    document.getElementById("chfPrice").textContent = data.currency.chf.toFixed(2);
+                    
+                    // تحديث أسعار الذهب
+                    document.getElementById("gold24Price").textContent = data.gold.gold24.toFixed(2);
+                    document.getElementById("gold21Price").textContent = data.gold.gold21.toFixed(2);
+                    document.getElementById("gold18Price").textContent = data.gold.gold18.toFixed(2);
+                    
+                    // تحديث التواريخ
+                    const now = new Date();
+                    const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                                      now.getMinutes().toString().padStart(2, '0');
+                    document.getElementById("lastUpdate").textContent = timeString;
+                    document.getElementById("goldLastUpdate").textContent = timeString;
+                    
+                    // تحديث لوحة التحكم
+                    if (document.getElementById("adminPanel").style.display !== "none") {
+                        document.getElementById("adminUsd").value = data.currency.usd;
+                        document.getElementById("adminEur").value = data.currency.eur;
+                        document.getElementById("adminGbp").value = data.currency.gbp;
+                        document.getElementById("adminChf").value = data.currency.chf;
+                        
+                        document.getElementById("adminGold24").value = data.gold.gold24;
+                        document.getElementById("adminGold21").value = data.gold.gold21;
+                        document.getElementById("adminGold18").value = data.gold.gold18;
+                        
+                        document.getElementById("adminLastUpdate").textContent = timeString;
+                    }
+                } else {
+                    await initializeData();
+                    await loadPrices();
+                }
+            } catch (error) {
+                console.error("خطأ في تحميل الأسعار:", error);
+            }
+        }
+
+        // تحميل التنبيهات
+        async function loadAlerts() {
+            try {
+                const pricesRef = doc(db, "prices", "current");
+                const pricesDoc = await getDoc(pricesRef);
+                
+                if (pricesDoc.exists()) {
+                    const data = pricesDoc.data();
+                    const alertsContainer = document.getElementById("alertsContainer");
+                    
+                    if (data.alerts && data.alerts.length > 0) {
+                        alertsContainer.innerHTML = '';
+                        data.alerts.forEach(alert => {
+                            const alertDiv = document.createElement('div');
+                            alertDiv.className = 'alert-item';
+                            alertDiv.innerHTML = `
+                                <h4>${alert.title}</h4>
+                                <p>${alert.message}</p>
+                            `;
+                            alertsContainer.appendChild(alertDiv);
+                        });
+                    }
+                    
+                    // تحديث قائمة التنبيهات في لوحة التحكم
+                    if (document.getElementById("adminPanel").style.display !== "none") {
+                        const currentAlerts = document.getElementById("currentAlerts");
+                        if (data.alerts && data.alerts.length > 0) {
+                            currentAlerts.innerHTML = '';
+                            data.alerts.forEach((alert, index) => {
+                                const alertDiv = document.createElement('div');
+                                alertDiv.style.cssText = 'background: #f5f5f5; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 4px;';
+                                alertDiv.innerHTML = `
+                                    <strong>${alert.title}</strong>
+                                    <p>${alert.message}</p>
+                                    <button onclick="deleteAlert(${index})" style="background: #c62828; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 3px; cursor: pointer;">حذف</button>
+                                `;
+                                currentAlerts.appendChild(alertDiv);
+                            });
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("خطأ في تحميل التنبيهات:", error);
+            }
+        }
+
+        // تحديث الأسعار في Firebase
+        async function updateCurrencyPrices() {
+            try {
+                const pricesRef = doc(db, "prices", "current");
+                await updateDoc(pricesRef, {
+                    "currency.usd": parseFloat(document.getElementById("adminUsd").value),
+                    "currency.eur": parseFloat(document.getElementById("adminEur").value),
+                    "currency.gbp": parseFloat(document.getElementById("adminGbp").value),
+                    "currency.chf": parseFloat(document.getElementById("adminChf").value),
+                    lastUpdated: Timestamp.now()
+                });
+                
+                alert("تم تحديث أسعار العملات بنجاح!");
+                await loadPrices();
+            } catch (error) {
+                console.error("خطأ في تحديث أسعار العملات:", error);
+                alert("حدث خطأ أثناء تحديث أسعار العملات");
+            }
+        }
+
+        // تحديث أسعار الذهب في Firebase
+        async function updateGoldPrices() {
+            try {
+                const pricesRef = doc(db, "prices", "current");
+                await updateDoc(pricesRef, {
+                    "gold.gold24": parseFloat(document.getElementById("adminGold24").value),
+                    "gold.gold21": parseFloat(document.getElementById("adminGold21").value),
+                    "gold.gold18": parseFloat(document.getElementById("adminGold18").value),
+                    lastUpdated: Timestamp.now()
+                });
+                
+                alert("تم تحديث أسعار الذهب بنجاح!");
+                await loadPrices();
+            } catch (error) {
+                console.error("خطأ في تحديث أسعار الذهب:", error);
+                alert("حدث خطأ أثناء تحديث أسعار الذهب");
+            }
+        }
+
+        // إضافة تنبيه جديد
+        async function addAlert() {
+            try {
+                const title = document.getElementById("adminAlertTitle").value;
+                const message = document.getElementById("adminAlertMessage").value;
+                
+                if (!title || !message) {
+                    alert("الرجاء إدخال عنوان ونص التنبيه");
+                    return;
+                }
+                
+                const pricesRef = doc(db, "prices", "current");
+                const pricesDoc = await getDoc(pricesRef);
+                
+                let alerts = [];
+                if (pricesDoc.exists()) {
+                    const data = pricesDoc.data();
+                    alerts = data.alerts || [];
+                }
+                
+                alerts.push({ title, message });
+                
+                await updateDoc(pricesRef, {
+                    alerts: alerts,
+                    lastUpdated: Timestamp.now()
+                });
+                
+                document.getElementById("adminAlertTitle").value = '';
+                document.getElementById("adminAlertMessage").value = '';
+                
+                alert("تم إضافة التنبيه بنجاح!");
+                await loadAlerts();
+            } catch (error) {
+                console.error("خطأ في إضافة التنبيه:", error);
+                alert("حدث خطأ أثناء إضافة التنبيه");
+            }
+        }
+
+        // حذف تنبيه
+        window.deleteAlert = async function(index) {
+            try {
+                const pricesRef = doc(db, "prices", "current");
+                const pricesDoc = await getDoc(pricesRef);
+                
+                if (pricesDoc.exists()) {
+                    const data = pricesDoc.data();
+                    let alerts = data.alerts || [];
+                    
+                    alerts.splice(index, 1);
+                    
+                    await updateDoc(pricesRef, {
+                        alerts: alerts,
+                        lastUpdated: Timestamp.now()
+                    });
+                    
+                    alert("تم حذف التنبيه بنجاح!");
+                    await loadAlerts();
+                }
+            } catch (error) {
+                console.error("خطأ في حذف التنبيه:", error);
+                alert("حدث خطأ أثناء حذف التنبيه");
+            }
+        };
+
+        // تسجيل الدخول
+        document.getElementById("loginForm")?.addEventListener("submit", async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // التحقق إذا كان المدير
+                if (email === "Mohammed@kyr.com") {
+                    document.getElementById("loginModal").style.display = "none";
+                    document.getElementById("adminPanel").style.display = "flex";
+                    document.getElementById("loginBtn").style.display = "none";
+                    document.getElementById("logoutBtn").style.display = "flex";
+                    document.getElementById("loginMessage").textContent = "تم تسجيل الدخول بنجاح!";
+                    document.getElementById("loginMessage").style.color = "green";
+                    
+                    // تحميل البيانات في لوحة التحكم
+                    await loadPrices();
+                    await loadAlerts();
+                } else {
+                    document.getElementById("loginMessage").textContent = "ليس لديك صلاحيات الدخول كمدير";
+                    document.getElementById("loginMessage").style.color = "red";
+                }
+            } catch (error) {
+                console.error("خطأ في تسجيل الدخول:", error);
+                document.getElementById("loginMessage").textContent = "خطأ في البريد الإلكتروني أو كلمة المرور";
+                document.getElementById("loginMessage").style.color = "red";
+            }
+        });
+
+        // تسجيل الخروج
+        async function handleLogout() {
+            try {
+                await signOut(auth);
+                document.getElementById("adminPanel").style.display = "none";
+                document.getElementById("loginBtn").style.display = "flex";
+                document.getElementById("logoutBtn").style.display = "none";
+                document.getElementById("loginMessage").textContent = "استخدم بيانات حساب المدير للدخول";
+                document.getElementById("loginMessage").style.color = "";
+            } catch (error) {
+                console.error("خطأ في تسجيل الخروج:", error);
+            }
+        }
+
+        // مراقبة حالة المصادقة
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.email === "Mohammed@kyr.com") {
+                document.getElementById("loginBtn").style.display = "none";
+                document.getElementById("logoutBtn").style.display = "flex";
+            } else {
+                document.getElementById("loginBtn").style.display = "flex";
+                document.getElementById("logoutBtn").style.display = "none";
+            }
+        });
+
+        // استماع للتغييرات في الوقت الحقيقي
+        function setupRealtimeListener() {
+            const pricesRef = doc(db, "prices", "current");
+            onSnapshot(pricesRef, (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    
+                    // تحديث واجهة المستخدم
+                    document.getElementById("usdPrice").textContent = data.currency.usd.toFixed(2);
+                    document.getElementById("eurPrice").textContent = data.currency.eur.toFixed(2);
+                    document.getElementById("gbpPrice").textContent = data.currency.gbp.toFixed(2);
+                    document.getElementById("chfPrice").textContent = data.currency.chf.toFixed(2);
+                    
+                    document.getElementById("gold24Price").textContent = data.gold.gold24.toFixed(2);
+                    document.getElementById("gold21Price").textContent = data.gold.gold21.toFixed(2);
+                    document.getElementById("gold18Price").textContent = data.gold.gold18.toFixed(2);
+                    
+                    const now = new Date();
+                    const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                                      now.getMinutes().toString().padStart(2, '0');
+                    document.getElementById("lastUpdate").textContent = timeString;
+                    document.getElementById("goldLastUpdate").textContent = timeString;
+                    
+                    // تحديث التنبيهات
+                    loadAlerts();
+                }
+            });
+        }
+
+        // تهيئة التطبيق
+        document.addEventListener("DOMContentLoaded", async function() {
+            // إضافة Font Awesome
+            const faScript = document.createElement('script');
+            faScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js';
+            document.head.appendChild(faScript);
+            
+            // إضافة خط Cairo
+            const link = document.createElement('link');
+            link.href = 'https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap';
+            link.rel = 'stylesheet';
+            document.head.appendChild(link);
+            
+            // تعيين النص لـ textarea
+            const textarea = document.getElementById("adminAlertMessage");
+            if (textarea) {
+                textarea.style.cssText = 'width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; resize: vertical;';
+            }
+            
+            // تهيئة البيانات
+            await initializeData();
+            
+            // تحميل الأسعار والتنبيهات
+            await loadPrices();
+            await loadAlerts();
+            
+            // إعداد الاستماع في الوقت الحقيقي
+            setupRealtimeListener();
+            
+            // تحديث تلقائي كل 5 دقائق
+            setInterval(async () => {
+                await loadPrices();
+                await loadAlerts();
+            }, 300000); // 5 دقائق
+            
+            // أحداث الأزرار
+            document.getElementById("loginBtn")?.addEventListener("click", function() {
+                document.getElementById("loginModal").style.display = "flex";
+            });
+            
+            document.getElementById("logoutBtn")?.addEventListener("click", handleLogout);
+            
+            document.getElementById("adminLogout")?.addEventListener("click", function(e) {
+                e.preventDefault();
+                handleLogout();
+            });
+            
+            document.getElementById("saveCurrency")?.addEventListener("click", updateCurrencyPrices);
+            document.getElementById("saveGold")?.addEventListener("click", updateGoldPrices);
+            document.getElementById("saveAlert")?.addEventListener("click", addAlert);
+            
+            // إغلاق نافذة تسجيل الدخول بالنقر خارجها
+            document.getElementById("loginModal")?.addEventListener("click", function(e) {
+                if (e.target.id === "loginModal") {
+                    this.style.display = "none";
+                }
+            });
+            
+            // قائمة الجوال
+            document.querySelector(".menu-toggle")?.addEventListener("click", function() {
+                const navLinks = document.querySelector(".nav-links");
+                navLinks.classList.toggle("mobile-active");
+            });
+            
+            // التنقل بين الأقسام في لوحة التحكم
+            document.querySelectorAll(".admin-nav a").forEach(link => {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    
+                    // إزالة النشط من جميع الروابط
+                    document.querySelectorAll(".admin-nav a").forEach(item => {
+                        item.classList.remove("active");
+                    });
+                    
+                    // إضافة النشط للرابط الحالي
+                    this.classList.add("active");
+                    
+                    // إظهار القسم المحدد
+                    const targetId = this.getAttribute("href").substring(1);
+                    document.querySelectorAll(".admin-section").forEach(section => {
+                        section.style.display = "none";
+                    });
+                    document.getElementById(targetId).style.display = "block";
+                });
+            });
+            
+            // إخفاء جميع الأقسام وإظهار الأول افتراضيًا
+            document.querySelectorAll(".admin-section").forEach((section, index) => {
+                if (index !== 0) {
+                    section.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
