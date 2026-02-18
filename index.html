@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRUKS CHAT</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f172a,#020617);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+direction:rtl;
+color:white;
+}
+
+.app{
+width:100%;
+max-width:480px;
+height:95vh;
+background:#0f172a;
+border-radius:25px;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+box-shadow:0 20px 60px rgba(0,0,0,.7);
+}
+
+/* HEADER */
+.header{
+background:#111827;
+padding:15px;
+text-align:center;
+font-size:18px;
+font-weight:800;
+border-bottom:1px solid #1f2937;
+}
+
+/* LOGIN */
+.login{
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.login input{
+background:#1f2937;
+border:none;
+border-radius:12px;
+padding:10px;
+color:white;
+outline:none;
+}
+
+.login button{
+padding:10px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+transition:.2s;
+}
+
+.primary{background:#2563eb;color:white;}
+.google{background:white;color:black;}
+
+.login button:hover{opacity:.85;}
+
+/* CHAT */
+.chat{
+display:none;
+flex-direction:column;
+height:100%;
+}
+
+.messages{
+flex:1;
+padding:15px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.message{
+max-width:75%;
+padding:10px 14px;
+border-radius:18px;
+font-size:14px;
+animation:fadeIn .3s ease;
+word-wrap:break-word;
+}
+
+.me{
+align-self:flex-start;
+background:#2563eb;
+border-bottom-left-radius:5px;
+}
+
+.other{
+align-self:flex-end;
+background:#1f2937;
+border-bottom-right-radius:5px;
+}
+
+.message small{
+display:block;
+font-size:10px;
+opacity:.6;
+margin-top:4px;
+}
+
+/* SEND */
+.send-box{
+display:flex;
+padding:10px;
+background:#111827;
+gap:8px;
+}
+
+.send-box input{
+flex:1;
+background:#1f2937;
+border:none;
+border-radius:12px;
+padding:10px;
+color:white;
+outline:none;
+}
+
+.send-box button{
+background:#2563eb;
+border:none;
+padding:10px 18px;
+border-radius:12px;
+color:white;
+cursor:pointer;
+}
+
+.logout{
+background:#ef4444;
+border:none;
+margin:10px;
+padding:8px;
+border-radius:12px;
+cursor:pointer;
+color:white;
+}
+
+/* Animation */
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+@media(max-width:500px){
+.app{
+height:100vh;
+border-radius:0;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<div class="header">🔥 PRUKS CHAT</div>
+
+<div class="login" id="login">
+<input type="email" id="email" placeholder="البريد الإلكتروني">
+<input type="password" id="password" placeholder="كلمة المرور">
+<input type="password" id="secret" placeholder="كود الدخول">
+
+<button class="primary" id="registerBtn">إنشاء حساب</button>
+<button class="primary" id="loginBtn">تسجيل دخول</button>
+<button class="google" id="googleBtn">تسجيل بقوقل</button>
+</div>
+
+<div class="chat" id="chat">
+<div class="messages" id="messages"></div>
+
+<div class="send-box">
+<input type="text" id="messageInput" placeholder="اكتب رسالة...">
+<button id="sendBtn">إرسال</button>
+</div>
+
+<button class="logout" id="logoutBtn">تسجيل خروج</button>
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "ضع_المفتاح_هنا",
+authDomain: "pro-83f6a.firebaseapp.com",
+projectId: "pro-83f6a",
+storageBucket: "pro-83f6a.firebasestorage.app",
+messagingSenderId: "665223332117",
+appId: "1:665223332117:web:8716516df53a164133a91c"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const SECRET = atob("YWxpM21r");
+
+const login = document.getElementById("login");
+const chat = document.getElementById("chat");
+const messagesDiv = document.getElementById("messages");
+
+function checkSecret(){
+return document.getElementById("secret").value === SECRET;
+}
+
+document.getElementById("registerBtn").onclick = async ()=>{
+if(!checkSecret()) return alert("كود الدخول خطأ");
+await createUserWithEmailAndPassword(auth,email.value,password.value);
+};
+
+document.getElementById("loginBtn").onclick = async ()=>{
+if(!checkSecret()) return alert("كود الدخول خطأ");
+await signInWithEmailAndPassword(auth,email.value,password.value);
+};
+
+document.getElementById("googleBtn").onclick = async ()=>{
+if(!checkSecret()) return alert("كود الدخول خطأ");
+const provider = new GoogleAuthProvider();
+await signInWithPopup(auth,provider);
+};
+
+document.getElementById("logoutBtn").onclick = ()=>signOut(auth);
+
+onAuthStateChanged(auth,user=>{
+if(user){
+login.style.display="none";
+chat.style.display="flex";
+loadMessages();
+}else{
+login.style.display="flex";
+chat.style.display="none";
+}
+});
+
+function loadMessages(){
+const q = query(collection(db,"messages"),orderBy("time"));
+onSnapshot(q,snapshot=>{
+messagesDiv.innerHTML="";
+snapshot.forEach(doc=>{
+const data = doc.data();
+const isMe = data.name === (auth.currentUser.displayName || auth.currentUser.email);
+
+messagesDiv.innerHTML += `
+<div class="message ${isMe?'me':'other'}">
+${data.text}
+<small>${data.name}</small>
+</div>`;
+});
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
+});
+}
+
+document.getElementById("sendBtn").onclick = async ()=>{
+const text = document.getElementById("messageInput").value.trim();
+if(!text) return;
+
+await addDoc(collection(db,"messages"),{
+name: auth.currentUser.displayName || auth.currentUser.email,
+text:text,
+time:serverTimestamp()
+});
+
+document.getElementById("messageInput").value="";
+};
+
+</script>
+</body>
+</html>
