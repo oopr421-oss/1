@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRUKS CHAT</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f172a,#1e293b);
+color:white;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* Card */
+.container{
+width:95%;
+max-width:400px;
+background:#1e293b;
+border-radius:20px;
+padding:30px;
+box-shadow:0 20px 40px rgba(0,0,0,.4);
+animation:fade .5s ease;
+}
+
+/* Logo */
+.logo{
+text-align:center;
+font-weight:800;
+font-size:22px;
+margin-bottom:20px;
+}
+
+/* Tabs */
+.tabs{
+display:flex;
+background:#0f172a;
+border-radius:12px;
+overflow:hidden;
+margin-bottom:20px;
+}
+
+.tab{
+flex:1;
+text-align:center;
+padding:10px;
+cursor:pointer;
+transition:.3s;
+font-weight:600;
+}
+
+.tab.active{
+background:#3b82f6;
+}
+
+/* Form */
+.form{
+display:none;
+}
+
+.form.active{
+display:block;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:none;
+border-radius:12px;
+background:#334155;
+color:white;
+font-size:14px;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:linear-gradient(45deg,#3b82f6,#6366f1);
+color:white;
+font-weight:700;
+cursor:pointer;
+margin-top:8px;
+transition:.3s;
+}
+
+button:hover{
+opacity:.85;
+}
+
+.error{
+color:#ef4444;
+text-align:center;
+margin-top:8px;
+font-size:13px;
+}
+
+/* Chat UI */
+.chat{
+display:none;
+flex-direction:column;
+height:100vh;
+width:100%;
+max-width:500px;
+background:#0f172a;
+}
+
+.chat-header{
+padding:15px;
+background:#1e293b;
+display:flex;
+justify-content:space-between;
+font-weight:700;
+}
+
+.messages{
+flex:1;
+overflow-y:auto;
+padding:15px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.message{
+max-width:75%;
+padding:10px 14px;
+border-radius:18px;
+font-size:14px;
+animation:fade .3s ease;
+}
+
+.me{
+background:#3b82f6;
+align-self:flex-end;
+border-bottom-right-radius:4px;
+}
+
+.other{
+background:#1f2937;
+align-self:flex-start;
+border-bottom-left-radius:4px;
+}
+
+.chat-input{
+display:flex;
+padding:10px;
+background:#1e293b;
+gap:6px;
+}
+
+.chat-input input{
+flex:1;
+}
+
+.chat-input button{
+width:auto;
+padding:10px 16px;
+}
+
+/* Animation */
+@keyframes fade{
+from{opacity:0;transform:translateY(10px)}
+to{opacity:1;transform:translateY(0)}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH CARD -->
+<div class="container" id="authBox">
+
+<div class="logo">PRUKS CHAT</div>
+
+<div class="tabs">
+<div class="tab active" onclick="switchTab('login')">تسجيل دخول</div>
+<div class="tab" onclick="switchTab('register')">إنشاء حساب</div>
+</div>
+
+<div class="form active" id="login">
+<input type="email" id="loginEmail" placeholder="البريد الإلكتروني">
+<input type="password" id="loginPass" placeholder="كلمة المرور">
+<input type="text" id="accessCode" placeholder="كود الدخول: ali3mk">
+<button id="loginBtn">دخول</button>
+</div>
+
+<div class="form" id="register">
+<input type="email" id="regEmail" placeholder="البريد الإلكتروني">
+<input type="password" id="regPass" placeholder="كلمة المرور">
+<button id="registerBtn">إنشاء حساب</button>
+</div>
+
+<p class="error" id="errorMsg"></p>
+
+</div>
+
+<!-- CHAT -->
+<div class="chat" id="chatBox">
+
+<div class="chat-header">
+<span>PRUKS CHAT</span>
+<button onclick="logout()">خروج</button>
+</div>
+
+<div class="messages" id="messages"></div>
+
+<div class="chat-input">
+<input type="text" id="messageInput" placeholder="اكتب رسالة...">
+<button id="sendBtn">إرسال</button>
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+onAuthStateChanged, signOut }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+import { getFirestore, collection, addDoc,
+onSnapshot, serverTimestamp, query, orderBy }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBNUHCVjxnCISn-DdcT5HlJfwUkx3ZEiDk",
+authDomain:"pro-83f6a.firebaseapp.com",
+projectId:"pro-83f6a",
+storageBucket:"pro-83f6a.firebasestorage.app",
+messagingSenderId:"665223332117",
+appId:"1:665223332117:web:8716516df53a164133a91c"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+window.switchTab=(id)=>{
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+document.querySelectorAll(".form").forEach(f=>f.classList.remove("active"));
+
+if(id==="login"){
+document.querySelectorAll(".tab")[0].classList.add("active");
+}else{
+document.querySelectorAll(".tab")[1].classList.add("active");
+}
+
+document.getElementById(id).classList.add("active");
+};
+
+loginBtn.onclick=()=>{
+if(accessCode.value!=="ali3mk"){
+errorMsg.textContent="كود الدخول غير صحيح";
+return;
+}
+signInWithEmailAndPassword(auth,loginEmail.value,loginPass.value)
+.catch(e=>errorMsg.textContent=e.message);
+};
+
+registerBtn.onclick=()=>{
+createUserWithEmailAndPassword(auth,regEmail.value,regPass.value)
+.catch(e=>errorMsg.textContent=e.message);
+};
+
+onAuthStateChanged(auth,user=>{
+if(user){
+authBox.style.display="none";
+chatBox.style.display="flex";
+loadMessages();
+}else{
+authBox.style.display="block";
+chatBox.style.display="none";
+}
+});
+
+window.logout=()=>signOut(auth);
+
+sendBtn.onclick=async ()=>{
+const text=messageInput.value.trim();
+if(!text)return;
+
+await addDoc(collection(db,"messages"),{
+uid:auth.currentUser.uid,
+text,
+time:serverTimestamp()
+});
+
+messageInput.value="";
+};
+
+function loadMessages(){
+const q=query(collection(db,"messages"),orderBy("time"));
+onSnapshot(q,snap=>{
+messages.innerHTML="";
+snap.forEach(doc=>{
+const d=doc.data();
+const div=document.createElement("div");
+div.className="message "+(d.uid===auth.currentUser.uid?"me":"other");
+div.textContent=d.text;
+messages.appendChild(div);
+});
+messages.scrollTop=messages.scrollHeight;
+});
+}
+
+</script>
+
+</body>
+</html>
